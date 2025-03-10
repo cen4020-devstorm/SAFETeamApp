@@ -1,0 +1,47 @@
+class RideRequestsController < ApplicationController
+    before_action :set_ride_request, only: [:show] 
+    # Ensures the ride request is set before executing the show action
+  
+    # Show estimated wait time and arrival time
+    def show
+      # Retrieve all ride requests that are waiting, ordered by creation time
+      requests_in_queue = RideRequest.where(status: 'waiting').order(:created_at)
+      
+      # Determine the position of the current ride request in the queue
+      position = requests_in_queue.pluck(:id).index(@ride_request.id)
+      
+      # Calculate the estimated wait time based on queue position
+      estimated_wait_time = calculate_estimated_wait_time(requests_in_queue, position)
+      
+      # Calculate the estimated arrival time by adding wait time to the current time
+      estimated_arrival_time = calculate_estimated_arrival_time(estimated_wait_time)
+  
+      # Render the JSON response with user details and estimated times
+      render json: {
+        user: @ride_request.user_name,
+        estimated_wait_time: "#{estimated_wait_time} minutes",
+        estimated_arrival_time: estimated_arrival_time.strftime('%I:%M %p')
+      }
+    end
+  
+    private
+  
+    # Set the ride request using the provided ID from the parameters
+    def set_ride_request
+      @ride_request = RideRequest.find(params[:id])
+    end
+  
+    # Calculate the estimated wait time based on the queue
+    def calculate_estimated_wait_time(requests_in_queue, position)
+      avg_ride_time = 5 # Assuming each ride takes 5 minutes
+      
+      # Multiply the number of rides ahead by the average ride time and a buffer factor (2x for round trip)
+      requests_in_queue[0..position-1].count * avg_ride_time * 2
+    end
+  
+    # Calculate the estimated arrival time based on wait time
+    def calculate_estimated_arrival_time(estimated_wait_time)
+      Time.current + estimated_wait_time.minutes # Add estimated wait time to the current time
+    end
+  end
+  
