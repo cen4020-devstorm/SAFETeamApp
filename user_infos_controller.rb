@@ -1,29 +1,3 @@
-# class UserInfosController < ApplicationController
-#     def new
-#       @user_info = UserInfo.new
-#     end
-  
-#     def create
-#       @user_info = UserInfo.new(user_info_params)
-#       if @user_info.save
-#         redirect_to @user_info, notice: "Information saved successfully!"
-#       else
-#         flash.now[:alert] = "There was an error with your input."
-#         render :new
-#       end
-#     end
-  
-#     def show
-#       @user_info = UserInfo.find(params[:id])
-#     end
-  
-#     private
-  
-#     def user_info_params
-#       params.require(:user_info).permit(:name, :phone, :location, :destination)
-#     end
-#   end
-
 class UserInfosController < ApplicationController
     def new
       @user_info = UserInfo.new
