@@ -1,0 +1,23 @@
+development:
+ adapter: mysql2
+ database: developmentdb
+ username: alizee
+ password: 1234
+ host: localhost
+ encoding: utf8
+
+test:
+ database: testdb
+ adapter: mysql2
+ encoding: utf8
+ username: alizee
+ password: 1234
+ host: localhost
+
+production:
+ adapter: mysql2
+ database: Railsdb
+ username: alizee
+ password: 1234
+ host: localhost
+ encoding: utf8
