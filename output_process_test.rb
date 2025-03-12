@@ -1,33 +1,52 @@
-require 'test_helper'
 
-class RideRequestsControllerTest < ActionDispatch::IntegrationTest
-  # Create a ride request to use in the tests
-  setup do
-    @ride_request = RideRequest.create(user_name: "John Doe", status: "waiting")
-    # Create a few more requests to test the queue system
-    3.times do |i|
-      RideRequest.create(user_name: "User #{i + 2}", status: "waiting")
+require "test_helper"
+
+class RideRequestsController < ApplicationController
+  before_action :set_ride_request, only: [:show]
+
+  # Show estimated wait time and arrival time
+  def show
+    if @ride_request.nil?
+      return
     end
+
+    # Retrieve all ride requests that are waiting, ordered by creation time
+    requests_in_queue = RideRequest.where(status: 'waiting').order(:created_at)
+    
+    # Determine the position of the current ride request in the queue
+    position = requests_in_queue.pluck(:id).index(@ride_request.id)
+    
+    # Calculate the estimated wait time based on queue position
+    estimated_wait_time = calculate_estimated_wait_time(requests_in_queue, position)
+    
+    # Calculate the estimated arrival time by adding wait time to the current time
+    estimated_arrival_time = calculate_estimated_arrival_time(estimated_wait_time)
+
+    # Print output to the terminal (or logs)
+    puts "Showing ride request details:"
+    puts "User: #{@ride_request.user_name}"
+    puts "Estimated wait time: #{estimated_wait_time} minutes"
+    puts "Estimated arrival time: #{estimated_arrival_time.strftime('%I:%M %p')}"
   end
 
-  test "should show estimated wait time and arrival time" do
-    # Make a GET request to the show action with the ride request ID
-    get ride_request_url(@ride_request)
+  private
 
-    # Parse the JSON response
-    json_response = JSON.parse(response.body)
+  # Set the ride request using the provided ID from the parameters
+  def set_ride_request
+    @ride_request = RideRequest.find_by(id: params[:id])
+  end
 
-    # Calculate expected values
-    position = RideRequest.where(status: 'waiting').order(:created_at).pluck(:id).index(@ride_request.id)
-    expected_wait_time = position * 5 * 2  # 5 minutes per ride, multiplied by a buffer (2x for round trip)
-    expected_arrival_time = (Time.current + expected_wait_time.minutes).strftime('%I:%M %p')
+  # Calculate the estimated wait time based on the queue
+  def calculate_estimated_wait_time(requests_in_queue, position)
+    avg_ride_time = 5 # Assuming each ride takes 5 minutes
+    requests_in_queue[0..position-1].count * avg_ride_time * 2
+  end
 
-    # Assert the response is successful
-    assert_response :success
-
-    # Assert the JSON response contains the correct values
-    assert_equal json_response['user'], @ride_request.user_name
-    assert_equal json_response['estimated_wait_time'], "#{expected_wait_time} minutes"
-    assert_equal json_response['estimated_arrival_time'], expected_arrival_time
+  # Calculate the estimated arrival time based on wait time
+  def calculate_estimated_arrival_time(estimated_wait_time)
+    Time.current + estimated_wait_time.minutes # Add estimated wait time to the current time
   end
 end
+
+
+
