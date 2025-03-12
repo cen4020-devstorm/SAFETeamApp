@@ -1,0 +1,46 @@
+<div class = "container mx-auto pt-75 bg-green-800 text-white justify-center items-center">
+  <body class="text-center font-sans bg-green-800 text-white flex justify-center items-center h-screen">
+    <h1 class = "font-bold underline text-xl">Enter Your Information</h1>
+
+    <% if @user_info.errors.any? %>
+      <div style="color: red;">
+        <h2><%= pluralize(@user_info.errors.count, "error") %> prohibited this form from being saved:</h2>
+        <ul>
+          <% @user_info.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <% if flash[:alert] %>
+      <p style="color: red; font-weight: bold;"><%= flash[:alert] %></p>
+    <% end %>
+
+    <%= form_with model: @user_info, local: true, data: { turbo: false } do |f| %>
+      <div class = "py-1 text-center">
+        <%= f.label :name, "Name:" %>
+        <%= f.text_field :name, class: "px-1 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black" %>
+      </div>
+
+      <div class = "py-1">
+        <%= f.label :phone, "Phone Number:" %>
+        <%= f.text_field :phone, class: "px-1 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black" %>
+      </div>
+
+      <div class = "py-1">
+        <%= f.label :location, "Your Location:" %>
+        <%= f.text_field :location, class: "px-1 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black" %>
+      </div>
+
+      <div class = "py-1">
+        <%= f.label :destination, "Destination:" %>
+        <%= f.text_field :destination, class: "px-1 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 text-black" %>
+      </div>
+
+      <div class="mt-2">
+        <%= f.submit "Submit", class: "bg-white text-green-800 font-semibold py-2 px-2 rounded-md border border-green-600 hover:bg-green-100 transition duration-300" %>
+      </div>
+    <% end %>
+  </body>
+</div>
