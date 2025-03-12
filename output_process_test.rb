@@ -1,6 +1,3 @@
-
-require "test_helper"
-
 class RideRequestsController < ApplicationController
   before_action :set_ride_request, only: [:show]
 
@@ -47,6 +44,3 @@ class RideRequestsController < ApplicationController
     Time.current + estimated_wait_time.minutes # Add estimated wait time to the current time
   end
 end
-
-
-
