@@ -1,0 +1,42 @@
+<h1>Enter Your Information</h1>
+
+<% if @user_info.errors.any? %>
+  <div style="color: red;">
+    <h2><%= pluralize(@user_info.errors.count, "error") %> prohibited this form from being saved:</h2>
+    <ul>
+      <% @user_info.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<% if flash[:alert] %>
+  <p style="color: red; font-weight: bold;"><%= flash[:alert] %></p>
+<% end %>
+
+<%= form_with model: @user_info, local: true, data: { turbo: false } do |f| %>
+  <div>
+    <%= f.label :name, "Name:" %>
+    <%= f.text_field :name %>
+  </div>
+
+  <div>
+    <%= f.label :phone, "Phone Number:" %>
+    <%= f.text_field :phone %>
+  </div>
+
+  <div>
+    <%= f.label :location, "Your Location:" %>
+    <%= f.text_field :location %>
+  </div>
+
+  <div>
+    <%= f.label :destination, "Destination:" %>
+    <%= f.text_field :destination %>
+  </div>
+
+  <div>
+    <%= f.submit "Submit" %>
+  </div>
+<% end %>

@@ -1,0 +1,16 @@
+
+
+<h1>Your Ride Request</h1>
+
+<p style="color: green; font-weight: bold;">Your request has been confirmed!</p>
+
+<p><strong>Name:</strong> <%= @user_info.name %></p>
+<p><strong>Phone:</strong> <%= @user_info.phone %></p>
+<p><strong>Pickup Location:</strong> <%= @user_info.location %></p>
+<p><strong>Destination:</strong> <%= @user_info.destination %></p>
+
+<h2>Estimated Waiting Time</h2>
+<p><strong>Time Until Pickup:</strong> <%= @waiting_time %></p>
+<p><strong>Driver Distance:</strong> <%= @waiting_distance %></p>
+
+<%= link_to "Request Another Ride", new_user_info_path %>
